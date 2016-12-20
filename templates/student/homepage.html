@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block javascript %}
+    <script src="{% static 'js/bloodhound.min.js' %}" ></script>
+    <script src="{% static 'js/bootstrap-typeahead.js' %}"></script>
+    <script type="text/javascript">
+
+        
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" style="margin-top: -20px;">
+        <div class="row">
+            <center><h3><strong>Data-Section</strong></h3></center> 
+            <div class="col-md-10 col-md-offset-1 profile-block">
+                <div id="id_added_students">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table col-md-offset-1">
+                                <td class="col-md-3 gap"><strong>Student Id</strong></td>
+                                <td class="col-md-3 gap"><strong>User Name</strong></td>
+                                <td class="col-md-3 gap"><strong>Email</strong></td>
+                                <td class="col-md-3 gap"><strong>Full Name</strong></td>  
+                            </table>
+                            {% for student in student_detail_content %}
+                                {{ student }}
+                            {% endfor %}            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+        <div class="col-md-10 col-md-offset-1">
+            <div class="btn-group btn-group-justified" role="group" aria-label="">
+                <div class="btn-group" role="group">
+                    <button id="add_more_student" type="button" class="btn btn-default" onclick="open_create()">Create</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" id="edit_more_student" class="btn btn-default" onclick="open_edit()">Update</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" id="delete_more_student" class="btn btn-default" onclick="open_delete()">Delete</button>
+                </div>
+                <div class="btn-group" role="group">
+                    <button type="button" id="get_more_student" class="btn btn-default" onclick="open_get()">Get</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" style="margin-top: 20px;">
+        <div class="row">
+            <h3 class="col-md-offset-1">Request Section</h3>
+            <div class="col-md-4 col-md-offset-1 profile-block">
+                <div id="id_students">
+                    <form class="form-horizontal" id="id_create_student" action="{% if student_id %}{% url 'actual_edit' student_id %}{% else %}{% url 'create_student' %}{% endif %}" role="form" method="post" onsubmit="return save_student($(this))" style="display: none;">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_first_name_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_first_name" class="control-label">*First Name:</label>
+                                        {{ create_student_form.first_name }}
+                                        <small class="error-msgs error" id="id_first_name_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_last_name_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_last_name" class="control-label">*Last Name:</label>
+                                        {{ create_student_form.last_name }}
+                                        <small class="error-msgs error" id="id_last_name_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_email_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_email" class="control-label">*Email:</label>
+                                        {{ create_student_form.email }}
+                                        <small class="error-msgs error" id="id_email_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_nationality_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_nationality" class="control-label">Nationality:</label>
+                                        {{ create_student_form.nationality }}
+                                        <small class="error-msgs error" id="id_nationality_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" style="border-width: -30px;">
+                                    <div class="col-md-12">
+                                        <div class=pull-left>
+                                            <input class="btn btn-primary btn-sm reset" type="submit" value="Create" style="width: 80px;"/>
+                                        </div>
+                                        <div class=pull-right>
+                                            <button class="btn btn-primary btn-sm" type="button"  style="width: 80px;" onclick="remove_form()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    </form>
+                    <form class="form-horizontal" id="id_get_student" action="{% url 'get_student' %}" role="form" method="post" onsubmit="return fetch_student($(this))" style="display: none;">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_get_username_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_get_user" class="control-label">*Username:</label>
+                                        {{ get_request_form.username }}
+                                        <small class="error-msgs error" id="id_get_username_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" style="border-width: -30px;">
+                                    <div class="col-md-12">
+                                        <div class=pull-left>
+                                            <input class="btn btn-primary btn-sm reset" type="submit" value="Get Details" style="width: 80px;"/>
+                                        </div>
+                                        <div class=pull-right>
+                                            <button class="btn btn-primary btn-sm" type="button"  style="width: 80px;" onclick="remove_form()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    </form>
+                    <form class="form-horizontal" id="id_delete_student" action="{% url 'delete_student' %}" role="form" method="post" onsubmit="return remove_student($(this))" style="display: none;">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_delete_username_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_get_delete" class="control-label">*Username:</label>
+                                        {{ get_delete_form.username }}
+                                        <small class="error-msgs error" id="id_delete_username_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" style="border-width: -30px;">
+                                    <div class="col-md-12">
+                                        <div class=pull-left>
+                                            <input class="btn btn-primary btn-sm reset" type="submit" value="Delete" style="width: 80px;"/>
+                                        </div>
+                                        <div class=pull-right>
+                                            <button class="btn btn-primary btn-sm" type="button"  style="width: 80px;" onclick="remove_form()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    </form>
+                    <form class="form-horizontal" id="id_edit_student" action="{% url 'edit_student' %}" role="form" method="post" onsubmit="return update_student($(this))" style="display: none;">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group"  id="id_edit_username_error_parent_div">
+                                    <div class="col-md-12">
+                                        <label for="id_get_update" class="control-label">*Username:</label>
+                                        {{ get_edit_form.username }}
+                                        <small class="error-msgs error" id="id_edit_username_error" style="display: none;"></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group" style="border-width: -30px;">
+                                    <div class="col-md-12">
+                                        <div class=pull-left>
+                                            <input class="btn btn-primary btn-sm" type="submit" value="Next" style="width: 80px;"/>
+                                        </div>
+                                        <div class=pull-right>
+                                            <button class="btn btn-primary btn-sm" type="button"  style="width: 80px;" onclick="remove_form()">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
+                    </form>
+                </div>
+            </div>
+            <h3 class="col-md-4 col-md-offset-2" style="margin-top: -40px;">Response section</h3>
+            <div class="col-md-4 col-md-offset-2 profile-block">
+                <pre id="id_response"></pre>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

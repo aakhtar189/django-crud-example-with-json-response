@@ -1,0 +1,10 @@
+<div class="row"  id="id_student_{{ student.id }}">
+    <div class="col-md-12 col-md-offset-1">
+        <table class="table">
+            <th class="col-md-3 gap" scope="row">{{ student.id }}</th>
+            <td class="col-md-3 gap">{{ student.user.username }}</td>
+            <td class="col-md-3 gap">{{ student.user.email }}</td>
+            <td class="col-md-3 gap">{{ student.user.get_full_name }}</td>     
+        </table>
+    </div>
+</div>
